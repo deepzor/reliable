@@ -1,6 +1,11 @@
 <?php
 /*
  * Plugin Name: Nasa Plugin
+ * Description: Nasa Plugin showing nasa gallery
+ * Plugin URI:  https://github.com/deepzor/reliable
+ * Author URI:  https://github.com/deepzor
+ * Author:      Sergey N
+ * Version:     1.0
  */
 
 require_once ABSPATH . 'wp-admin/includes/media.php';
@@ -78,15 +83,18 @@ function nasa_get_data(){
         'post_status'   => 'publish',
         'post_type'     => 'post-nasa-gallery'
     );
-    $postid = wp_insert_post( $args );
-    $thumbnail_id = media_sideload_image( $data['hdurl'], $postid, $data['title'], 'id');
-    set_post_thumbnail( $postid, $thumbnail_id );
+    for($i=0;$i<5;$i++){
+        $postid = wp_insert_post( $args );
+        $thumbnail_id = media_sideload_image( $data['hdurl'], $postid, $data['title'], 'id');
+        set_post_thumbnail( $postid, $thumbnail_id );
+    }
 }
 
 //Creating Shortcode to show Gallery
 add_shortcode( 'nasa-gallery', 'nasa_gallery' );
 
 function nasa_gallery(){
+    ob_start();
     $args = array(
         'post_type' => 'post-nasa-gallery',
         'posts_per_page' => -1
@@ -104,5 +112,8 @@ function nasa_gallery(){
         </div>
     <?php endif;
     wp_reset_postdata();
+    $html = ob_get_contents();
+    ob_end_clean();
+    return $html;
 }
 
